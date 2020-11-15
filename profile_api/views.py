@@ -9,6 +9,7 @@ from profile_api import permissions
 from rest_framework import filters
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.settings import api_settings
+from rest_framework.permissions import IsAuthenticated
 
 
 class HelloApiView(APIView):
@@ -78,7 +79,7 @@ class HelloViewSets(viewsets.ViewSet):
         """Handle getting an object by its ID"""
         return Response({'http_method':'GET'})
 
-    def update(self, requst,pk=None):
+    def update(self, request,pk=None):
         """Handle updagting an object and by primary key"""
         return Response({'http_method':'PUT'})
 
@@ -110,6 +111,10 @@ class UserProfileFeedViewset(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     serializer_class = serializers.ProfileFeedItemSerializer
     queryset = models.ProfileFeedItem.objects.all()
+    permission_classes = (
+        permissions.Update_Own_Status,
+        IsAuthenticated
+    )
 
     def perform_create(self, serializer):
         """Sets the user profile to the logged in user"""
